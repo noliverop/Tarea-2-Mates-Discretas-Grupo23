@@ -45,3 +45,84 @@ def C_eficiente(S,B):
 # Ejemplo 
 
 C_eficiente(100,169) #  235555651928
+
+
+# Pregunta 4 y 5
+# Implementación de algoritmo para generar pirámides
+
+#piramides: list list -> list
+def piramides(Mg,Mc):
+  """Crea piramides a partir de otras piramides """
+  n=len(Mg)
+  m=len(Mc)
+  Lista=[]
+  for i in range(n-m+1):
+    l=[]+Mg
+    for j in range(m):
+      l[i+j]=Mg[i+j]+Mc[j]
+      L=l
+    Lista.append(L)
+  return Lista
+
+#generar: int int -> list
+def generar(S,B):
+  """Se generan todas las piramides de S pilas y B bloques"""
+  if S == B: #caso base piramide
+    return [list(np.ones(S,dtype=int))]
+  #Matriz donde calcularemos las piramides necesarias para el calculo
+  M=np.zeros((B-S+1,B-S+1),dtype=object)
+  M.fill([[0]])
+  #Casos base con S=1
+  for i in range(1,B-S+1):
+    M[i][1]=[[i]]
+  #Creamos las piramides necesarias
+  for i in range(1,B-S+1):
+    for j in range(2,i+1):
+      if i==j:
+        x=np.ones((1,j),dtype=int)
+        M[i][j]=x.tolist()
+      if i>j:
+        L=[]
+        y=np.ones(j,dtype=int)
+        Mg=y.tolist()
+        for a in range(1,j+1):
+          c=C_eficiente(a,i-j)
+          for b in range(c):
+            Mc=M[i-j][a][b]
+            p=piramides(Mg,Mc)
+            L+=p
+          M[i][j]=L
+  #Calculamos lo que buscamos
+  if B>S:
+    L=[]
+    y=np.ones(S,dtype=int)
+    Mg=y.tolist()
+    for a in range(1,S+1):
+      c=C_eficiente(a,B-S)
+      for b in range(c):
+        Mc=M[B-S][a][b]
+        p=piramides(Mg,Mc)
+        L+=p
+  return L
+
+
+# Por último la función dibujar imprime todas las posibles pirámides
+
+def dibujar(lista):
+  pilas = len(lista[0])
+  for i in range(len(lista)):
+     lineas = []
+      arreglo = lista[i]
+      maximo= max(arreglo)
+      for j in range(maximo):
+        string = ""
+        for k in range(pilas):
+          if arreglo[k] != 0:
+            string = string + "1 "
+            arreglo[k] = arreglo[k] - 1
+          else:
+            string = string + "0 "
+        lineas.append(string)
+      for j in range(len(lineas)):
+        print(lineas[maximo-j-1])
+      print("")
